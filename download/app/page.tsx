@@ -16,31 +16,25 @@ import {
   Target,
   Clock,
   TrendingUp,
-  Coffee,
-  ChevronRight,
   ExternalLink
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { useEffect, useState } from "react";
 
-// Integrations data
-const integrations = [
-  { name: 'Google Calendar', slug: 'gcal', tier: 'oauth-ready' },
-  { name: 'Gmail', slug: 'gmail', tier: 'oauth-ready' },
-  { name: 'Apple Health', slug: 'healthkit', tier: 'bridge' },
-  { name: 'Strava', slug: 'strava', tier: 'oauth-ready' },
-  { name: 'Fitbit', slug: 'fitbit', tier: 'coming-soon' },
-  { name: 'Garmin', slug: 'garmin', tier: 'coming-soon' },
-  { name: 'Brightspace', slug: 'brightspace', tier: 'mock-friendly' },
-  { name: 'Canvas LMS', slug: 'canvas', tier: 'mock-friendly' },
-  { name: 'Outlook', slug: 'outlook', tier: 'oauth-ready' },
-  { name: 'Zoom', slug: 'zoom', tier: 'oauth-ready' },
-  { name: 'Slack', slug: 'slack', tier: 'oauth-ready' },
-  { name: 'Notion', slug: 'notion', tier: 'coming-soon' },
-  { name: 'Trello', slug: 'trello', tier: 'coming-soon' },
-  { name: 'iCal', slug: 'ical', tier: 'basic' },
+// Integrations data - only those with actual logos
+const integrationsWithLogos = [
+  { name: 'Google Calendar', slug: 'gcal', tier: 'oauth-ready', color: '#4285F4', image: '/integrations/gcal.png' },
+  { name: 'Gmail', slug: 'gmail', tier: 'oauth-ready', color: '#EA4335', image: '/integrations/gmail.png' },
+  { name: 'Apple Health', slug: 'healthkit', tier: 'bridge', color: '#FF2D55', image: '/integrations/applehealth.png' },
+  { name: 'Strava', slug: 'strava', tier: 'oauth-ready', color: '#FC4C02', image: '/integrations/strava.svg' },
+  { name: 'Fitbit', slug: 'fitbit', tier: 'coming-soon', color: '#00B0B9', image: '/integrations/fitbit.png' },
+  { name: 'Brightspace', slug: 'brightspace', tier: 'mock-friendly', color: '#F5661F', image: '/integrations/brightspace.png' },
+  { name: 'Slack', slug: 'slack', tier: 'oauth-ready', color: '#4A154B', image: '/integrations/slack.png' },
+  { name: 'Notion', slug: 'notion', tier: 'coming-soon', color: '#000000', image: '/integrations/notion.png' },
+  { name: 'Trello', slug: 'trello', tier: 'coming-soon', color: '#0079BF', image: '/integrations/trello.png' },
 ];
 
 // Value propositions
@@ -74,30 +68,32 @@ const valueProps = [
 // Pricing plans
 const pricingPlans = [
   {
-    name: "Free (Demo Mode)",
+    name: "Free",
     price: "$0",
     period: "forever",
-    description: "For hackathons & trials",
+    description: "Perfect for getting started",
     features: [
-      "Mock data, sample friends, seeded menus",
-      "Chat & action previews",
-      "No external API calls",
-      "Basic support"
+      "10 conversations per day",
+      "Access to dashboard",
+      "10+ integrations",
+      "Basic action planning",
+      "Community support"
     ],
-    cta: "Try Demo",
+    cta: "Get Started Free",
     popular: false,
-    badge: "Demo Mode"
+    badge: "Free"
   },
   {
-    name: "Student Pro",
+    name: "Pro",
     price: "$5",
     period: "per month",
     description: "For active students",
     features: [
+      "Unlimited conversations",
       "Real integrations (GCal, Strava, HealthKit*)",
       "Buddy matching (verified friends)",
       "Dining filters & weekly plans",
-      "Priority support",
+      "Discounts at 5+ local coffee shops & restaurants",
       "Campus dining integration"
     ],
     cta: "Start Pro Trial",
@@ -145,24 +141,22 @@ const testimonials = [
 // Community partners
 const partners = [
   {
-    name: "Campus Coffee Co.",
-    perk: "Latte on us after 4-week streak",
-    location: "Downtown"
+    name: "Blacksmith Coffee",
+    perk: "20% off coffee after 7-day workout streak",
+    location: "NYUAD, Saadiyat Campus",
+    image: "/partners/blacksmith.jpg"
   },
   {
-    name: "FitLife Gym",
-    perk: "Free class after 10 workouts",
-    location: "Campus"
+    name: "Mysk",
+    perk: "20% off after 5 fitness sessions with friend",
+    location: "NYUAD, Saadiyat Campus",
+    image: "/partners/mysk.avif"
   },
   {
-    name: "Green Smoothie Bar",
-    perk: "20% off after 5 healthy meals",
-    location: "Student Union"
-  },
-  {
-    name: "Study Spot Cafe",
-    perk: "Free coffee with study buddy meetup",
-    location: "Library"
+    name: "BobaBae", 
+    perk: "Buy one get one free on 5K run completion",
+    location: "NYUAD, Saadiyat Campus",
+    image: "/partners/bobabae.jpeg"
   }
 ];
 
@@ -463,45 +457,88 @@ export default function LandingPage() {
         <section id="integrations" className="py-24 bg-slate-50">
           <div className="mx-auto max-w-screen-xl px-6">
             {/* Section Header */}
-            <div className="text-center mb-20">
-              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">100+ Integrations</h2>
-              <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-                Connect what you already use. Start with mock data, add real integrations later.
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Integrations</h2>
+              <p className="text-xl text-slate-700 max-w-2xl mx-auto leading-relaxed">
+                Connect the tools you already use
               </p>
             </div>
             
             {/* Integrations Grid */}
-            <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {integrations.map((integration) => (
-                <div key={integration.slug} className="group flex items-center justify-center rounded-2xl border border-slate-200 bg-white p-6 transition-all hover:shadow-lg hover:border-indigo-600/20">
-                  <div className="text-center space-y-3">
-                    <div className="h-14 w-14 bg-indigo-600/5 rounded-xl mx-auto flex items-center justify-center group-hover:bg-indigo-600/10 transition-colors">
-                      <span className="text-sm font-bold text-indigo-600">{integration.name.split(' ')[0]}</span>
-                    </div>
-                    <div className="text-sm text-slate-900 font-medium">{integration.name}</div>
-                    <Badge 
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        integration.tier === 'oauth-ready' ? 'bg-emerald-500/10 text-emerald-500 border-mint/20' :
-                        integration.tier === 'mock-friendly' ? 'bg-indigo-600/10 text-indigo-600 border-brand/20' :
-                        integration.tier === 'bridge' ? 'bg-amber-500/10 text-amber-500 border-warning/20' :
-                        'bg-slate-50 text-slate-700 border-slate-200'
-                      }`}
+            <div className="relative overflow-hidden">
+              {/* Infinite scroll animation */}
+              <style jsx>{`
+                @keyframes scroll {
+                  0% {
+                    transform: translateX(0);
+                  }
+                  100% {
+                    transform: translateX(-50%);
+                  }
+                }
+                .animate-scroll {
+                  animation: scroll 30s linear infinite;
+                }
+                .animate-scroll:hover {
+                  animation-play-state: paused;
+                }
+              `}</style>
+              
+              {/* Single row - scroll left */}
+              <div className="flex items-center animate-scroll">
+                {/* First set of integrations */}
+                {integrationsWithLogos.map((integration, idx) => (
+                  <div 
+                    key={`first-${idx}`}
+                    className="flex-shrink-0 mx-3"
+                  >
+                    <div 
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center transition-all hover:scale-110 shadow-lg border border-slate-200/50 overflow-hidden bg-white"
+                      title={integration.name}
                     >
-                      {integration.tier === 'oauth-ready' ? 'OAuth Ready' :
-                       integration.tier === 'mock-friendly' ? 'Mock-friendly' :
-                       integration.tier === 'bridge' ? 'Bridge' :
-                       'Coming Soon'}
-                    </Badge>
+                      <Image 
+                        src={integration.image} 
+                        alt={integration.name}
+                        width={48}
+                        height={48}
+                        className="object-contain p-2"
+                      />
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+                {/* Duplicate set for seamless loop */}
+                {integrationsWithLogos.map((integration, idx) => (
+                  <div 
+                    key={`second-${idx}`}
+                    className="flex-shrink-0 mx-3"
+                  >
+                    <div 
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center transition-all hover:scale-110 shadow-lg border border-slate-200/50 overflow-hidden bg-white"
+                      title={integration.name}
+                    >
+                      <Image 
+                        src={integration.image} 
+                        alt={integration.name}
+                        width={48}
+                        height={48}
+                        className="object-contain p-2"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              {/* "And many more" text below */}
+              <div className="text-center mt-8">
+                <p className="text-slate-600 font-medium text-lg">and many more...</p>
+              </div>
             </div>
             
             {/* CTA */}
-            <div className="text-center mt-12">
-              <Button variant="outline" className="text-slate-700 hover:text-slate-900 border-slate-200 hover:border-indigo-600 px-8 py-3 rounded-full font-medium">
-                See all integrations <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
+            <div className="text-center mt-16">
+              <p className="text-sm text-slate-600 max-w-lg mx-auto">
+                Connect your favorite apps and services. Start with mock data, then add real integrations when you're ready.
+              </p>
             </div>
           </div>
         </section>
@@ -543,18 +580,23 @@ export default function LandingPage() {
           <div className="mx-auto max-w-screen-xl px-6">
             {/* Section Header */}
             <div className="text-center mb-20">
-              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Community Rewards</h2>
+              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Fitness Rewards</h2>
               <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
-                Move more → earn more (locally). Partnered with local coffee shops and gyms to reward healthy habits.
+                Stay active, get rewarded. Local partners offer perks for reaching your fitness goals.
               </p>
             </div>
             
             {/* Partners Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
               {partners.map((partner, index) => (
                 <Card key={index} className="p-8 text-center rounded-2xl border-slate-200 shadow-sm hover:shadow-lg transition-all group">
-                  <div className="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500/20 transition-colors">
-                    <Coffee className="h-8 w-8 text-emerald-500" />
+                  <div className="w-24 h-24 rounded-2xl mx-auto mb-6 overflow-hidden relative border border-slate-200">
+                    <Image 
+                      src={partner.image} 
+                      alt={partner.name}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                   <h3 className="text-xl font-bold text-slate-900 mb-3 font-sora">{partner.name}</h3>
                   <p className="text-slate-700 mb-3 text-lg">{partner.perk}</p>
