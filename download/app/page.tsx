@@ -11,12 +11,17 @@ import {
   Star,
   ArrowRight,
   MessageCircle,
-  Play,
   Shield,
   Target,
   Clock,
   TrendingUp,
-  ExternalLink
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Lightbulb,
+  Puzzle,
+  Rocket,
+  Zap
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -160,31 +165,50 @@ const partners = [
   }
 ];
 
+// Community features
+const communityFeatures = [
+  {
+    title: "Friend Connections",
+    description: "Connect with friends, see their availability, and plan activities together seamlessly",
+    image: "/friends/1.png"
+  },
+  {
+    title: "Buddy Matching",
+    description: "Get matched with workout partners based on fitness level, schedule, and preferences",
+    image: "/friends/2.png"
+  },
+  {
+    title: "Group Activities",
+    description: "Create and join group workouts, study sessions, and social events with your community",
+    image: "/friends/3.png"
+  }
+];
+
 // FAQ
 const faq = [
   {
-    question: "Do I need API keys to try it?",
-    answer: "No, Demo Mode uses mock data so you can experience everything without any setup."
+    question: "How does SyncOS protect my personal data?",
+    answer: "All data is encrypted end-to-end. You control what integrations have access to, and can revoke permissions anytime. We never sell your data to third parties."
   },
   {
-    question: "What actions can the assistant take?",
-    answer: "It proposes calendar events, meal suggestions, and buddy matches—then acts only after you confirm."
+    question: "What integrations are currently supported?",
+    answer: "We support 10+ integrations including Google Calendar, Gmail, Strava, Fitbit, Slack, Notion, and more. New integrations are added regularly based on user requests."
   },
   {
-    question: "How do buddy matches work?",
-    answer: "Based on availability, preferences, and fitness compatibility. You control what data is shared."
+    question: "How does buddy matching work?",
+    answer: "Our algorithm matches you with workout partners based on your fitness level, schedule availability, location preferences, and activity type. All matches are opt-in and you control who sees your availability."
   },
   {
-    question: "What sources power dining suggestions?",
-    answer: "Mock campus dining data now; real sources will be added per campus partnership."
+    question: "Can I use this if my campus doesn't have a dining partnership?",
+    answer: "Yes! The core features work anywhere. Campus dining integration is a bonus feature we're rolling out campus by campus. You can still get fitness tracking, buddy matching, and calendar integration."
   },
   {
-    question: "Will this replace my calendar app?",
-    answer: "No, it augments and syncs with your existing tools to make them smarter."
+    question: "How do I earn rewards at local coffee shops?",
+    answer: "Pro members automatically earn rewards by hitting fitness milestones tracked through connected apps. Just show your SyncOS app at participating locations to redeem."
   },
   {
-    question: "Is medical advice provided?",
-    answer: "Information only—not a substitute for professional medical advice. Always consult healthcare providers."
+    question: "Is there a student discount?",
+    answer: "Our Pro plan is already student-priced at $5/month. We also offer the Free plan with 10 daily conversations and basic features at no cost."
   }
 ];
 
@@ -192,28 +216,45 @@ const faq = [
 const journeyMilestones = [
   {
     title: "Problem Interviews",
-    description: "Top 5 pain points: calendar chaos, meal indecision, flaky workouts, etc.",
-    artifacts: ["Interview notes", "Pain point map"]
+    description: "Identified main pain points from student feedback",
+    artifacts: ["Interview notes", "Pain point analysis"]
   },
   {
-    title: "Lo-fi Flows", 
-    description: "Chat-first → confirmation modal → audit log",
-    artifacts: ["Wireframes", "User flows"]
-  },
-  {
-    title: "Mock Data Seeding",
-    description: "Devices, dining, assignments for realistic demos",
-    artifacts: ["Data model", "Seed scripts"]
+    title: "Target Audience", 
+    description: "Defined key user segments and needs",
+    artifacts: ["User personas", "Market research"]
   },
   {
     title: "Buddy Matching v0",
-    description: "Availability + preferences heuristic",
-    artifacts: ["Algorithm design", "Matching logic"]
+    description: "First version of workout partner matching algorithm",
+    artifacts: ["MVP prototype", "Algorithm design"]
   },
   {
-    title: "Demo Feedback",
-    description: "User testing and what's next",
-    artifacts: ["Feedback notes", "Roadmap"]
+    title: "Beta Launch",
+    description: "Released to first cohort of students",
+    artifacts: ["Beta metrics", "User feedback"]
+  }
+];
+
+// Video testimonials
+const videoTestimonials = [
+  {
+    name: "Felipe, Nikosh & Lucho",
+    subtitle: "3 friends who train together regularly",
+    videoId: "moc7A5Xpf50",
+    isShort: false
+  },
+  {
+    name: "Nasser's Experience",
+    subtitle: "Student and previous user of nutrient apps",
+    videoId: "Cph_LUlNWck",
+    isShort: true
+  },
+  {
+    name: "Amjad's Story",
+    subtitle: "Student and balancing gym with studies",
+    videoId: "5FkieOEZ_0U",
+    isShort: true
   }
 ];
 
@@ -221,6 +262,8 @@ export default function LandingPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [currentFeatureIndex, setCurrentFeatureIndex] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -303,13 +346,9 @@ export default function LandingPage() {
                       Try the Demo (Mock Data)
                     </Link>
                   </Button>
-                  <Button variant="outline" className="border-slate-200 text-slate-700 hover:bg-slate-50 px-8 py-4 rounded-full text-lg font-medium">
-                    <Play className="mr-2 h-5 w-5" />
-                    Watch 60-sec Overview
-                </Button>
                   <Button variant="outline" className="bg-white text-slate-900 shadow-sm ring-1 ring-slate-200 hover:bg-slate-50 px-8 py-4 rounded-full text-lg font-medium">
                     Sign in with Google
-                </Button>
+                  </Button>
                 </div>
                 
                 <p className="text-sm text-slate-700/70">No actions are taken without your confirmation.</p>
@@ -317,19 +356,6 @@ export default function LandingPage() {
               
               {/* Right Visual */}
               <div className="relative">
-                {/* Main Video Container */}
-                <div className="aspect-video w-full overflow-hidden rounded-2xl border border-slate-200 bg-slate-50/50 flex items-center justify-center shadow-lg">
-                  <div className="text-center space-y-4">
-                    <div className="w-20 h-20 bg-indigo-600/10 rounded-full flex items-center justify-center mx-auto">
-                      <Play className="h-10 w-10 text-indigo-600" />
-                    </div>
-                    <div>
-                      <p className="text-slate-700 font-medium">Product demo video placeholder</p>
-                      <p className="text-sm text-slate-700/60">60-second overview</p>
-                    </div>
-                  </div>
-                </div>
-                
                 {/* Floating UI Chips */}
                 <div className="pointer-events-none absolute -bottom-6 -left-8 hidden md:block">
                   <div className="rounded-2xl bg-white px-4 py-3 text-sm shadow-lg border border-slate-200">
@@ -614,6 +640,96 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* Community Features Carousel */}
+        <section id="community-features" className="py-24 bg-white">
+          <div className="mx-auto max-w-screen-xl px-6">
+            {/* Section Header */}
+            <div className="text-center mb-20">
+              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Community Features</h2>
+              <p className="text-xl text-slate-700 max-w-3xl mx-auto leading-relaxed">
+                Connect, collaborate, and grow together with your fitness community
+              </p>
+            </div>
+            
+            {/* Features Carousel */}
+            <div className="relative max-w-5xl mx-auto">
+              <div className="overflow-hidden rounded-3xl">
+                <div 
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentFeatureIndex * 100}%)` }}
+                >
+                  {communityFeatures.map((feature, index) => (
+                    <div key={index} className="w-full flex-shrink-0 px-4">
+                      <Card className="border-slate-200 shadow-lg rounded-3xl overflow-hidden">
+                        <div className="relative aspect-video bg-slate-100">
+                          <Image 
+                            src={feature.image} 
+                            alt={feature.title}
+                            fill
+                            className="object-contain p-4"
+                          />
+                        </div>
+                        <div className="p-8 text-center">
+                          <h3 className="text-2xl font-bold text-slate-900 mb-4 font-sora">{feature.title}</h3>
+                          <p className="text-lg text-slate-700">{feature.description}</p>
+                        </div>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Navigation Buttons */}
+              <button
+                onClick={() => setCurrentFeatureIndex((prev) => (prev === 0 ? communityFeatures.length - 1 : prev - 1))}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors border border-slate-200"
+              >
+                <ChevronLeft className="h-7 w-7" />
+              </button>
+              <button
+                onClick={() => setCurrentFeatureIndex((prev) => (prev === communityFeatures.length - 1 ? 0 : prev + 1))}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 w-14 h-14 bg-white rounded-full shadow-xl flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors border border-slate-200"
+              >
+                <ChevronRight className="h-7 w-7" />
+              </button>
+              
+              {/* Dots Indicator */}
+              <div className="flex justify-center gap-3 mt-8">
+                {communityFeatures.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentFeatureIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all ${
+                      index === currentFeatureIndex 
+                        ? 'bg-indigo-600 w-10' 
+                        : 'bg-slate-300 hover:bg-slate-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Demo Video */}
+        <section className="py-24 bg-gradient-to-br from-slate-50 to-indigo-50/30">
+          <div className="mx-auto max-w-screen-lg px-6">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4 font-sora">Take a look!</h2>
+              <p className="text-xl text-slate-700">See how these community features work in action</p>
+            </div>
+            <div className="relative aspect-video rounded-3xl overflow-hidden shadow-2xl border border-slate-200 bg-slate-900">
+              <iframe
+                src="https://www.youtube.com/embed/EdlbpD9FiVU"
+                title="Community Features Demo"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </div>
+        </section>
+
         {/* Pricing */}
         <section id="pricing" className="py-24 bg-white">
           <div className="mx-auto max-w-screen-xl px-6">
@@ -721,39 +837,238 @@ export default function LandingPage() {
             <div className="text-center mb-20">
               <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Our Journey</h2>
               <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
-                We interviewed students and recent grads to understand daily friction across schedules, workouts, and food. 
-                Here's how those insights shaped our MVP—and what we're testing next.
+                From student interviews to our first beta launch—here's how we built SyncOS.
               </p>
             </div>
             
-            {/* Journey Timeline */}
-            <div className="space-y-12">
-              {journeyMilestones.map((milestone, index) => (
-                <div key={index} className="flex items-start space-x-8">
-                  <div className="w-16 h-16 bg-indigo-600/10 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <span className="text-2xl font-bold text-indigo-600">{index + 1}</span>
+            {/* Journey Content - Two Column Layout */}
+            <div className="grid lg:grid-cols-2 gap-12 items-start">
+              {/* Left Column - Timeline */}
+              <div className="space-y-12">
+                {journeyMilestones.map((milestone, index) => (
+                  <div key={index} className="flex items-start space-x-6">
+                    <div className="w-12 h-12 bg-indigo-600/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl font-bold text-indigo-600">{index + 1}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-bold text-slate-900 mb-3 font-sora">{milestone.title}</h3>
+                      <p className="text-slate-700 mb-4 leading-relaxed">{milestone.description}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {milestone.artifacts.map((artifact, artifactIndex) => (
+                          <Badge key={artifactIndex} className="bg-slate-50 text-slate-700 border-slate-200 px-3 py-1 rounded-full text-xs">
+                            {artifact}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-4 font-sora">{milestone.title}</h3>
-                    <p className="text-slate-700 text-lg mb-6 leading-relaxed">{milestone.description}</p>
-                    <div className="flex flex-wrap gap-3">
-                      {milestone.artifacts.map((artifact, artifactIndex) => (
-                        <Badge key={artifactIndex} className="bg-slate-50 text-slate-700 border-slate-200 px-4 py-2 rounded-full">
-                          {artifact}
-                        </Badge>
+                ))}
+              </div>
+              
+              {/* Right Column - Video Testimonials Carousel */}
+              <div className="sticky top-8">
+                <div className="text-center mb-6">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2 font-sora">User Stories</h3>
+                  <p className="text-slate-600">Hear from students using SyncOS</p>
+                </div>
+                
+                {/* Carousel Container */}
+                <div className="relative">
+                  {/* Video Display */}
+                  <div className="overflow-hidden rounded-2xl">
+                    <div 
+                      className="flex transition-transform duration-500 ease-in-out"
+                      style={{ transform: `translateX(-${currentVideoIndex * 100}%)` }}
+                    >
+                      {videoTestimonials.map((video, index) => (
+                        <div key={index} className="w-full flex-shrink-0">
+                          <div className="relative rounded-2xl aspect-video border border-slate-200 overflow-hidden bg-black">
+                            <iframe
+                              src={`https://www.youtube.com/embed/${video.videoId}?rel=0&modestbranding=1`}
+                              title={video.name}
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="absolute inset-0 w-full h-full"
+                            />
+                          </div>
+                          <div className="text-center mt-4">
+                            <p className="text-slate-900 font-bold text-lg">{video.name}</p>
+                            <p className="text-slate-600">{video.subtitle}</p>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   </div>
+                  
+                  {/* Navigation Buttons */}
+                  <button
+                    onClick={() => setCurrentVideoIndex((prev) => (prev === 0 ? videoTestimonials.length - 1 : prev - 1))}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors border border-slate-200"
+                  >
+                    <ChevronLeft className="h-6 w-6" />
+                  </button>
+                  <button
+                    onClick={() => setCurrentVideoIndex((prev) => (prev === videoTestimonials.length - 1 ? 0 : prev + 1))}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white rounded-full shadow-lg flex items-center justify-center hover:bg-indigo-600 hover:text-white transition-colors border border-slate-200"
+                  >
+                    <ChevronRight className="h-6 w-6" />
+                  </button>
+                  
+                  {/* Dots Indicator */}
+                  <div className="flex justify-center gap-2 mt-6">
+                    {videoTestimonials.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentVideoIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          index === currentVideoIndex 
+                            ? 'bg-indigo-600 w-8' 
+                            : 'bg-slate-300 hover:bg-slate-400'
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
-            
-            {/* CTA */}
-            <div className="text-center mt-16">
-              <Button variant="outline" className="text-slate-700 hover:text-slate-900 border-slate-200 hover:border-indigo-600 px-8 py-4 rounded-full text-lg font-medium">
-                <Play className="mr-3 h-5 w-5" />
-                Watch 2-3 min Founder Walkthrough
-              </Button>
+          </div>
+        </section>
+
+        {/* Vision & Process */}
+        <section className="py-24 bg-gradient-to-br from-indigo-50 to-purple-50">
+          <div className="mx-auto max-w-screen-xl px-6">
+            {/* Section Header */}
+            <div className="text-center mb-20">
+              <h2 className="text-4xl font-bold text-slate-900 mb-6 font-sora">Building the Ultimate Health OS</h2>
+              <p className="text-xl text-slate-700 max-w-4xl mx-auto leading-relaxed">
+                From fragmented chaos to unified simplicity
+              </p>
+            </div>
+
+            {/* The Problem */}
+            <div className="mb-16">
+              <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-lg rounded-3xl">
+                <div className="flex items-start gap-6 mb-6">
+                  <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Puzzle className="h-8 w-8 text-red-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold text-slate-900 mb-4 font-sora">The Problem</h3>
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      Students and young professionals are drowning in fragmented apps — calendars, course platforms, fitness trackers, food apps, and chat groups. 
+                      From biometric data to meal planning to study schedules, everyone uses different platforms to manage their lives, wasting time and losing consistency 
+                      in both health and productivity.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Our Vision */}
+            <div className="mb-16">
+              <Card className="p-8 md:p-12 bg-white border-slate-200 shadow-lg rounded-3xl">
+                <div className="flex items-start gap-6 mb-6">
+                  <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <Lightbulb className="h-8 w-8 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-3xl font-bold text-slate-900 mb-4 font-sora">Our Vision: The Health OS Companion</h3>
+                    <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                      A single conversational assistant that unifies it all. It checks your deadlines, finds free time, pairs you with a workout partner, 
+                      plans meals, and even rewards you with perks through partnerships with cafés, gyms, and wellness brands.
+                    </p>
+                    <p className="text-lg text-slate-700 leading-relaxed">
+                      It's part planner, part fitness coach, part life-optimizer — the all-in-one operating system for a healthier, more productive life.
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            {/* Development Challenges & Learnings */}
+            <div className="mb-16">
+              <h3 className="text-3xl font-bold text-slate-900 mb-8 text-center font-sora">Development Journey & Key Learnings</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* Challenge 1 */}
+                <Card className="p-8 bg-white border-slate-200 shadow-sm rounded-2xl">
+                  <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
+                    <MessageCircle className="h-6 w-6 text-amber-600" />
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-3 font-sora">Chat vs Dashboard Balance</h4>
+                  <p className="text-slate-700 mb-4">
+                    We struggled with the question: How much should be chat-based vs dashboard-based?
+                  </p>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <p className="text-sm font-semibold text-emerald-800 mb-1">✓ Solution</p>
+                    <p className="text-sm text-emerald-700">
+                      After user validation, we learned people prefer a conversational interface. We focused on making the chat agent the primary interaction method.
+                    </p>
+                  </div>
+                </Card>
+
+                {/* Challenge 2 */}
+                <Card className="p-8 bg-white border-slate-200 shadow-sm rounded-2xl">
+                  <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+                    <Users className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <h4 className="text-xl font-bold text-slate-900 mb-3 font-sora">Community & Friends</h4>
+                  <p className="text-slate-700 mb-4">
+                    How do we make this feel personal and connected, not just another app?
+                  </p>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                    <p className="text-sm font-semibold text-emerald-800 mb-1">✓ Solution</p>
+                    <p className="text-sm text-emerald-700">
+                      We realized friends are a key part in planning. Added buddy matching and friend features to create a community aspect.
+                    </p>
+                  </div>
+                </Card>
+              </div>
+            </div>
+
+            {/* Next Steps */}
+            <div>
+              <h3 className="text-3xl font-bold text-slate-900 mb-8 text-center font-sora">What's Next</h3>
+              <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <Card className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl text-center group hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Zap className="h-8 w-8 text-indigo-600" />
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900 mb-3 font-sora">Fully Agentic System</h4>
+                  <p className="text-slate-700 text-sm">
+                    A truly autonomous assistant that can take decisions with your guidance purely through chat
+                  </p>
+                </Card>
+
+                <Card className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl text-center group hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Puzzle className="h-8 w-8 text-emerald-600" />
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900 mb-3 font-sora">Universal Integrations</h4>
+                  <p className="text-slate-700 text-sm">
+                    Connect with every platform students use—course systems, fitness apps, food delivery, and more
+                  </p>
+                </Card>
+
+                <Card className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl text-center group hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Shield className="h-8 w-8 text-purple-600" />
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900 mb-3 font-sora">Secure Social Platform</h4>
+                  <p className="text-slate-700 text-sm">
+                    Build a safe, verified environment for friend-making and community connections
+                  </p>
+                </Card>
+
+                <Card className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl text-center group hover:shadow-lg transition-shadow">
+                  <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <Rocket className="h-8 w-8 text-amber-600" />
+                  </div>
+                  <h4 className="text-lg font-bold text-slate-900 mb-3 font-sora">Expand Partnerships</h4>
+                  <p className="text-slate-700 text-sm">
+                    Establish and validate partnerships with local coffee shops, gyms, and wellness brands
+                  </p>
+                </Card>
+              </div>
             </div>
           </div>
         </section>
